@@ -1,0 +1,24 @@
+{
+  "name": "Firewall Rule Modification Outside Change Window",
+  "description": "Detects firewall rule changes occurring outside authorized change windows, which may indicate unauthorized access attempts.",
+  "rule_type": "event",
+  "conditions": [
+    {
+      "field": "EventName",
+      "operator": "equals",
+      "value": "Firewall Rule Modified"
+    },
+    {
+      "field": "ChangeWindow",
+      "operator": "equals",
+      "value": "False"
+    }
+  ],
+  "follow_up": {
+    "field": "Username",
+    "operator": "not_in",
+    "value": ["SecAdmin", "NetOps"]
+  },
+  "response": "Generate offense with severity Critical"
+}
+
