@@ -10,16 +10,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4   # Node.js 24 ilə uyğun versiya
+        uses: actions/checkout@v4
 
       - name: Deploy rules to QRadar
         run: |
           for file in rules/*.json; do
-            echo "Deploying $file to QRadar..."
-            curl -k -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/rules" \
+            echo "------------------------------------------------------"
+            echo "Processing file: $file"
+            
+            # Sending rule to Analytics API
+            RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/analytics/rules" \
               -H "Content-Type: application/json" \
+              -H "Accept: application/json" \
               -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
-              --data @"$file"
+              --data @"$file")
+
+            echo "QRadar Response (HTTP Status): $RESPONSE"
+            
+            if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
+              echo "Success: $file uploaded to QRadar."
+            elif [ "$RESPONSE" == "409" ]; then
+              echo "Warning: Rule already exists. Use PUT to update."
+            else
+              echo "ERROR: Could not upload $file. Status code: $RESPONSE"
+            fi
           done
+
+      - name: Apply Changes (Full Deploy)
+        # This step is critical to make rules visible in the GUI
+        run: |
+          echo "------------------------------------------------------"
+          echo "Triggering Global Deploy Changes..."
+          DEPLOY_RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/system/staged_config/deploy" \
+            -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}")
+          
+          echo "Deploy Status: $DEPLOY_RESPONSE"
+          if [ "$DEPLOY_RESPONSE" == "202" ]; then
+            echo "Deployment started successfully. Check QRadar Console in a few minutes."
+          else
+            echo "Deployment failed! Status: $DEPLOY_RESPONSE"
+          fi
 
 
