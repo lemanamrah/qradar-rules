@@ -1,7 +1,7 @@
 <extension>
-    <uuid>09ffdac2-d5e3-4804-abcd-b29b516a3f6d</uuid>
-    <name>GitHubCustomRules</name>
-    <version>1.0.1</version>
-    <description>Rules from GitHub Actions</description>
+    <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+    <name>GitHubRulesExtensionV2</name>
+    <version>1.0.2</version>
+    <description>Clean deployment via GitHub Actions</description>
     <author>Leman</author>
 </extension>
