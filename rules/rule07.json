@@ -1,0 +1,23 @@
+{
+  "name": "Suspicious VPN Login Location",
+  "description": "Detects VPN logins from unusual or unauthorized geographic locations.",
+  "rule_type": "event",
+  "conditions": [
+    {
+      "field": "EventName",
+      "operator": "equals",
+      "value": "VPN Login"
+    },
+    {
+      "field": "GeoLocation",
+      "operator": "not_in",
+      "value": ["AZ", "TR", "EU"]
+    }
+  ],
+  "follow_up": {
+    "field": "LoginTime",
+    "operator": "outside_business_hours",
+    "value": "08:00-20:00"
+  },
+  "response": "Generate offense with severity High"
+}
