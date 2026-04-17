@@ -16,13 +16,12 @@ jobs:
 
       - name: Create Extension Zip
         run: |
-          # We use -j (junk paths) to ensure manifest.xml and all JSON rules 
-          # are placed at the root of the ZIP file, which prevents 422 errors.
+          # Packaging with -j to put files at the zip root level
           zip -j extension.zip manifest.xml rules/*.json
 
       - name: Upload Extension to QRadar
         run: |
-          echo "Uploading extension to QRadar Extension Management..."
+          echo "Uploading extension to QRadar..."
           RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/extension_management/extensions" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
             -F "file=@extension.zip")
@@ -31,7 +30,7 @@ jobs:
           if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
             echo "Success: Extension uploaded to QRadar."
           else
-            echo "Error: Received HTTP $RESPONSE. Ensure manifest.xml is correct and no duplicate extension exists."
+            echo "Error: Received HTTP $RESPONSE. Check manifest and SEC token."
             exit 1
           fi
 
