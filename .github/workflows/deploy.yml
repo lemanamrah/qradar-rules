@@ -16,14 +16,12 @@ jobs:
 
       - name: Create Extension Zip
         run: |
-          # Packaging manifest and JSON rules together at the root
-          # -j flag is used to avoid directory nesting
+          # Manifest və JSON qaydalarını zip-in kökünə yığırıq
           zip -j extension.zip manifest.xml rules/*.json
 
       - name: Upload Extension to QRadar
         run: |
           echo "Uploading extension to QRadar..."
-          # We add 'type=application/zip' to the file field to help QRadar parse it correctly
           RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/extension_management/extensions" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
             -H "Accept: application/json" \
@@ -42,4 +40,5 @@ jobs:
         run: |
           echo "Triggering global deployment..."
           curl -k -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/deploy" \
-            -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}"
+            -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
+            -k -s
