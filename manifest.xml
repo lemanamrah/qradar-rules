@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension>
-    <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
-    <name>GitHubRulesExtension</name>
-    <version>1.0.3</version>
-    <description>Custom rules deployment</description>
-    <author>Leman</author>
+    <uuid>f47ac10b-58cc-4372-a567-0e02b2c3d499</uuid>
+    <name>Leman_QRadar_Security_Rules_Final</name>
+    <version>2.0.0</version>
+    <description>All 11 rules formatted for QRadar API compliance</description>
+    <author>Leman Amrahli</author>
     <type>ANALYTICS</type>
 </extension>
