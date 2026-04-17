@@ -1,23 +1,27 @@
-{
-  "name": "Unusual Outbound Connection to Rare IP",
-  "description": "Detects outbound connections to IP addresses that are rarely seen in the environment, which may indicate C2 communication or data exfiltration.",
-  "rule_type": "network",
-  "conditions": [
-    {
-      "field": "Direction",
-      "operator": "equals",
-      "value": "Outbound"
+[
+  {
+    "name": "Unusual Outbound Connection to Rare IP",
+    "description": "Detects outbound connections to rare IP addresses, indicating possible C2 or exfiltration.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Direction",
+          "operator": "EQUALS",
+          "value": "Outbound"
+        },
+        {
+          "field": "Destination Port",
+          "operator": "IN",
+          "value": "8080,4444,1337"
+        }
+      ]
     },
-    {
-      "field": "DestinationIPFrequency",
-      "operator": "less_than",
-      "value": 3
+    "trigger": {
+      "severity": 8,
+      "offense_type": "Destination IP"
     }
-  ],
-  "follow_up": {
-    "field": "DestinationPort",
-    "operator": "in",
-    "value": [8080, 4444, 1337]
-  },
-  "response": "Generate offense with severity High"
-}
+  }
+]
