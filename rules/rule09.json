@@ -1,23 +1,27 @@
-{
-  "name": "Unauthorized Database Dump",
-  "description": "Detects large-scale database dump operations performed without authorization, which may indicate data exfiltration.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventName",
-      "operator": "equals",
-      "value": "Database Dump"
+[
+  {
+    "name": "Unauthorized Database Dump",
+    "description": "Detects large-scale database dump operations performed without authorization.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event Name",
+          "operator": "EQUALS",
+          "value": "Database Dump"
+        },
+        {
+          "field": "User Name",
+          "operator": "NOT_IN",
+          "value": "DBAdmin,SecOps"
+        }
+      ]
     },
-    {
-      "field": "DumpSizeMB",
-      "operator": "greater_than",
-      "value": 500
+    "trigger": {
+      "severity": 10,
+      "offense_type": "Database"
     }
-  ],
-  "follow_up": {
-    "field": "Username",
-    "operator": "not_in",
-    "value": ["DBAdmin", "SecOps"]
-  },
-  "response": "Generate offense with severity Critical"
-}
+  }
+]
