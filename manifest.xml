@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<extension>
-    <uuid>99998888-7777-6666-5555-444433332222</uuid>
-    <name>LemanCleanTest</name>
-    <version>20.0.0</version>
-    <description>Emergency 422 fix attempt</description>
-    <author>Leman</author>
-    <type>ANALYTICS</type>
-</extension>
