@@ -1,22 +1,13 @@
-[
-  {
-    "name": "Connection Test Rule",
-    "description": "Simple test to break 422 error",
-    "enabled": true,
-    "type": "ADE_RULE",
-    "source_data": {
-      "strategy": "simple_logic",
-      "conditions": [
-        {
-          "field": "Event ID",
-          "operator": "NOT_NULL"
-        }
-      ]
-    },
-    "trigger": {
-      "severity": 5,
-      "offense_type": "Source IP"
+{
+  "name": "High Event Rate Detection",
+  "type": "EVENT",
+  "enabled": true,
+  "conditions": [
+    {
+      "field": "event_count",
+      "operator": ">",
+      "value": 1000
     }
-  }
-]
-
+  ],
+  "severity": 5
+}
