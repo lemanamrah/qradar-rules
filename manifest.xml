@@ -1,5 +1,5 @@
 <extension>
-    <uuid>123e4567-e89b-12d3-a456-426614174000</uuid>
+    <uuid>09ffdac2-d5e3-4804-abcd-b29b516a3f6d</uuid>
     <name>GitHubCustomRules</name>
     <version>1.0.1</version>
     <description>Rules from GitHub Actions</description>
