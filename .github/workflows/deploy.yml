@@ -1,45 +1,17 @@
-name: Deploy QRadar Extension
+name: Deploy QRadar Rules
 
 on:
   push:
     paths:
-      - "rules/*.json"
-      - "manifest.xml"
-  workflow_dispatch:
+      - 'rules/**'
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Create Extension Zip
-        run: |
-          # -j bayrağı faylları qovluq yaratmadan birbaşa zip-in içinə yığır
-          zip -j extension.zip manifest.xml rules/*.json
-
-      - name: Upload Extension to QRadar
-        run: |
-          echo "Uploading extension to QRadar..."
-          RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/extension_management/extensions" \
-            -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
-            -H "Accept: application/json" \
-            -F "file=@extension.zip;type=application/zip")
-          
-          echo "Upload Status: $RESPONSE"
-          if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
-            echo "Success: Extension uploaded to QRadar."
-          else
-            echo "Error: Received HTTP $RESPONSE. Please check SEC token permissions or manifest format."
-            exit 1
-          fi
-
-      - name: Trigger Deploy
-        if: success()
-        run: |
-          echo "Triggering global deployment..."
-          # Dəyişikliklərin QRadar-da aktivləşməsi üçün deploy əmri
-          curl -k -s -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/deploy" \
-            -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
-            -H "Accept: application/json"
+      - name: Run deploy script
+        run: pwsh ./scripts/deploy.ps1
