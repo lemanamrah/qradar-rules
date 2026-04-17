@@ -1,4 +1,4 @@
-name: Deploy QRadar Rules
+name: Deploy QRadar Extension
 
 on:
   push:
@@ -13,38 +13,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy rules to QRadar
+      - name: Create Extension Zip
         run: |
-          for file in rules/*.json; do
-            echo "------------------------------------------------------"
-            echo "Processing file: $file"
-            
-            # QRadar bEzi versiyalarda bu yolu istifadE edir: /api/analytics/custom_rules
-            # eger bu da 404 verse, /api/analytics/rules/ hissesinin sonuna bir / elave etmeliyik
-            RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/analytics/custom_rules" \
-              -H "Content-Type: application/json" \
-              -H "Accept: application/json" \
-              -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
-              --data @"$file")
+          # Packaging rules into a zip file for QRadar Extension Management
+          zip -r extension.zip rules/
 
-            echo "QRadar Response (HTTP Status): $RESPONSE"
-            
-            if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
-              echo "Success: $file uploaded."
-            else
-              echo "Failed with $RESPONSE. Retrying with alternative endpoint..."
-              # Alternativ endpoint yoxlanışı
-              RESPONSE_ALT=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/analytics/rules" \
-                -H "Content-Type: application/json" \
-                -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
-                --data @"$file")
-              echo "Alternative Response: $RESPONSE_ALT"
-            fi
-          done
-
-      - name: Apply Changes
+      - name: Upload Extension to QRadar
         run: |
-          echo "Triggering Deploy..."
-          # Deploy yolu mutleq budur, eger 404 SEC Token icazesi çatm
-          curl -k -X POST "https://${{ secrets.QRADAR_HOST }}/api/system/staged_config/deploy" \
+          echo "Uploading extension to QRadar Extension Management..."
+          # Using the endpoint confirmed from your API documentation: /api/config/extension_management/extensions
+          RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/extension_management/extensions" \
+            -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
+            -H "Accept: application/json" \
+            -F "file=@extension.zip")
+          
+          echo "Upload Status: $RESPONSE"
+          if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
+            echo "Success: Extension uploaded to QRadar."
+          else
+            echo "Error: Failed to upload. Received HTTP $RESPONSE"
+            exit 1
+          fi
+
+      - name: Trigger Deploy
+        run: |
+          echo "Triggering global deployment in QRadar..."
+          # Using the universal config deploy endpoint
+          curl -k -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/deploy" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}"
