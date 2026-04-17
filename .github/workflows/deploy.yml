@@ -16,14 +16,13 @@ jobs:
 
       - name: Create Extension Zip
         run: |
-          # Packaging both the rules directory and the manifest.xml file
-          # This structure is required by QRadar Extension Management
-          zip -r extension.zip rules/ manifest.xml
+          # Packaging manifest and rules together at the root of the archive
+          zip -r extension.zip manifest.xml rules/
 
       - name: Upload Extension to QRadar
         run: |
           echo "Uploading extension to QRadar..."
-          # Using the multipart/form-data POST request to upload the zip package
+          # The multipart/form-data request is used for extension upload
           RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/extension_management/extensions" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
             -F "file=@extension.zip")
@@ -32,14 +31,13 @@ jobs:
           if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
             echo "Success: Extension uploaded to QRadar."
           else
-            echo "Error: Received HTTP $RESPONSE. Verify manifest.xml and API permissions."
+            echo "Error: Received HTTP $RESPONSE. Verify manifest.xml format."
             exit 1
           fi
 
       - name: Trigger Deploy
         if: success()
         run: |
-          echo "Triggering global deployment changes..."
-          # Deploying staged configurations to make the changes active
+          echo "Triggering global deployment..."
           curl -k -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/deploy" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}"
