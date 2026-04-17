@@ -1,23 +1,27 @@
-{
-  "name": "Suspicious Service Installation",
-  "description": "Detects when a new service is installed that may indicate persistence or malware activity.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventName",
-      "operator": "equals",
-      "value": "Service Installed"
+[
+  {
+    "name": "Suspicious Service Installation",
+    "description": "Detects when a new service is installed that may indicate persistence or malware activity.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event Name",
+          "operator": "EQUALS",
+          "value": "Service Installed"
+        },
+        {
+          "field": "Service Path",
+          "operator": "CONTAINS",
+          "value": "C:\\Users\\"
+        }
+      ]
     },
-    {
-      "field": "ServicePath",
-      "operator": "contains",
-      "value": "C:\\Users\\"
+    "trigger": {
+      "severity": 8,
+      "offense_type": "Service"
     }
-  ],
-  "follow_up": {
-    "field": "ServiceName",
-    "operator": "matches",
-    "value": ".*(malware|hacktool|unknown).*"
-  },
-  "response": "Generate offense with severity High"
-}
+  }
+]
