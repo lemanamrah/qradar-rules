@@ -1,22 +1,21 @@
 [
   {
-    "name": "Multiple Failed Logins Followed by Success",
-    "description": "Detects brute-force attempts where multiple failed logins are followed by a successful login.",
+    "name": "Connection Test Rule",
+    "description": "Simple test to break 422 error",
     "enabled": true,
     "type": "ADE_RULE",
     "source_data": {
       "strategy": "simple_logic",
       "conditions": [
         {
-          "field": "Event Name",
-          "operator": "EQUALS",
-          "value": "Login Failed"
+          "field": "Event ID",
+          "operator": "NOT_NULL"
         }
       ]
     },
     "trigger": {
-      "threshold": 5,
-      "window": "5m"
+      "severity": 5,
+      "offense_type": "Source IP"
     }
   }
 ]
