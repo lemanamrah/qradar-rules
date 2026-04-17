@@ -1,0 +1,23 @@
+{
+  "name": "Privilege Escalation Attempt",
+  "description": "Detects when a standard user account performs actions that indicate privilege escalation.",
+  "rule_type": "event",
+  "conditions": [
+    {
+      "field": "EventName",
+      "operator": "equals",
+      "value": "User Added to Administrators Group"
+    },
+    {
+      "field": "UsernameRole",
+      "operator": "equals",
+      "value": "StandardUser"
+    }
+  ],
+  "follow_up": {
+    "field": "EventName",
+    "operator": "equals",
+    "value": "Admin-Level Action Performed"
+  },
+  "response": "Generate offense with severity Critical"
+}
