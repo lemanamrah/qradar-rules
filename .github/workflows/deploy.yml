@@ -16,21 +16,24 @@ jobs:
 
       - name: Create Extension Zip
         run: |
-          # Packaging with -j to put files at the zip root level
+          # Packaging manifest and JSON rules together at the root
+          # -j flag is used to avoid directory nesting
           zip -j extension.zip manifest.xml rules/*.json
 
       - name: Upload Extension to QRadar
         run: |
           echo "Uploading extension to QRadar..."
+          # We add 'type=application/zip' to the file field to help QRadar parse it correctly
           RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/extension_management/extensions" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
-            -F "file=@extension.zip")
+            -H "Accept: application/json" \
+            -F "file=@extension.zip;type=application/zip")
           
           echo "Upload Status: $RESPONSE"
           if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
             echo "Success: Extension uploaded to QRadar."
           else
-            echo "Error: Received HTTP $RESPONSE. Check manifest and SEC token."
+            echo "Error: Received HTTP $RESPONSE. Please check SEC token permissions or manifest format."
             exit 1
           fi
 
