@@ -1,23 +1,29 @@
-{
-  "name": "Suspicious LDAP Query Volume",
-  "description": "Detects unusually high volumes of LDAP queries which may indicate domain enumeration or credential harvesting.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventName",
-      "operator": "equals",
-      "value": "LDAP Query"
+[
+  {
+    "name": "Suspicious LDAP Query Volume",
+    "description": "Detects unusually high volumes of LDAP queries indicating domain enumeration.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event Name",
+          "operator": "EQUALS",
+          "value": "LDAP Search"
+        },
+        {
+          "field": "Source IP",
+          "operator": "NOT_IN",
+          "value": "192.168.75.10,192.168.75.11"
+        }
+      ]
     },
-    {
-      "field": "Count",
-      "operator": "greater_than",
-      "value": 100
+    "trigger": {
+      "threshold": 100,
+      "window": "10m",
+      "severity": 9,
+      "offense_type": "Source IP"
     }
-  ],
-  "follow_up": {
-    "field": "SourceIP",
-    "operator": "not_in",
-    "value": ["192.168.75.10", "192.168.75.11"]
-  },
-  "response": "Generate offense with severity Critical"
-}
+  }
+]
