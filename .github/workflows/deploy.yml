@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "rules/*.json"
+      - "manifest.xml"
   workflow_dispatch:
 
 jobs:
@@ -15,29 +16,30 @@ jobs:
 
       - name: Create Extension Zip
         run: |
-          # Packaging rules into a zip file for QRadar Extension Management
-          zip -r extension.zip rules/
+          # Packaging both the rules directory and the manifest.xml file
+          # This structure is required by QRadar Extension Management
+          zip -r extension.zip rules/ manifest.xml
 
       - name: Upload Extension to QRadar
         run: |
-          echo "Uploading extension to QRadar Extension Management..."
-          # Using the endpoint confirmed from your API documentation: /api/config/extension_management/extensions
+          echo "Uploading extension to QRadar..."
+          # Using the multipart/form-data POST request to upload the zip package
           RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/extension_management/extensions" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
-            -H "Accept: application/json" \
             -F "file=@extension.zip")
           
           echo "Upload Status: $RESPONSE"
           if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
             echo "Success: Extension uploaded to QRadar."
           else
-            echo "Error: Failed to upload. Received HTTP $RESPONSE"
+            echo "Error: Received HTTP $RESPONSE. Verify manifest.xml and API permissions."
             exit 1
           fi
 
       - name: Trigger Deploy
+        if: success()
         run: |
-          echo "Triggering global deployment in QRadar..."
-          # Using the universal config deploy endpoint
+          echo "Triggering global deployment changes..."
+          # Deploying staged configurations to make the changes active
           curl -k -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/deploy" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}"
