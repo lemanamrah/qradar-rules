@@ -1,5 +1,7 @@
 <extension>
+    <uuid>123e4567-e89b-12d3-a456-426614174000</uuid>
     <name>GitHubCustomRules</name>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <description>Rules from GitHub Actions</description>
+    <author>Leman</author>
 </extension>
