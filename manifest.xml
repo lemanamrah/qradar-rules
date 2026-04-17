@@ -1,0 +1,8 @@
+<extension>
+    <name>GitHub_Custom_Rules</name>
+    <version>1.0.0</version>
+    <description>Rules deployed via GitHub Actions</description>
+    <items>
+        <item_group name="Custom Rules" />
+    </items>
+</extension>
