@@ -1,0 +1,23 @@
+{
+  "name": "Suspicious Service Installation",
+  "description": "Detects when a new service is installed that may indicate persistence or malware activity.",
+  "rule_type": "event",
+  "conditions": [
+    {
+      "field": "EventName",
+      "operator": "equals",
+      "value": "Service Installed"
+    },
+    {
+      "field": "ServicePath",
+      "operator": "contains",
+      "value": "C:\\Users\\"
+    }
+  ],
+  "follow_up": {
+    "field": "ServiceName",
+    "operator": "matches",
+    "value": ".*(malware|hacktool|unknown).*"
+  },
+  "response": "Generate offense with severity High"
+}
