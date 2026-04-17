@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <extension>
     <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
-    <name>GitHubRulesExtensionV2</name>
-    <version>1.0.2</version>
-    <description>Clean deployment via GitHub Actions</description>
+    <name>GitHubRulesExtension</name>
+    <version>1.0.3</version>
+    <description>Custom rules deployment</description>
     <author>Leman</author>
+    <type>ANALYTICS</type>
 </extension>
