@@ -16,13 +16,13 @@ jobs:
 
       - name: Create Extension Zip
         run: |
-          # Packaging manifest and rules together at the root of the archive
-          zip -r extension.zip manifest.xml rules/
+          # We use -j (junk paths) to ensure manifest.xml and all JSON rules 
+          # are placed at the root of the ZIP file, which prevents 422 errors.
+          zip -j extension.zip manifest.xml rules/*.json
 
       - name: Upload Extension to QRadar
         run: |
-          echo "Uploading extension to QRadar..."
-          # The multipart/form-data request is used for extension upload
+          echo "Uploading extension to QRadar Extension Management..."
           RESPONSE=$(curl -k -s -o /dev/null -w "%{http_code}" -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/extension_management/extensions" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
             -F "file=@extension.zip")
@@ -31,7 +31,7 @@ jobs:
           if [ "$RESPONSE" == "201" ] || [ "$RESPONSE" == "200" ]; then
             echo "Success: Extension uploaded to QRadar."
           else
-            echo "Error: Received HTTP $RESPONSE. Verify manifest.xml format."
+            echo "Error: Received HTTP $RESPONSE. Ensure manifest.xml is correct and no duplicate extension exists."
             exit 1
           fi
 
