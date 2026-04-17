@@ -1,0 +1,13 @@
+{
+  "name": "Rule 7",
+  "severity": 7,
+  "enabled": true,
+  "conditions": [
+    {
+      "operator": ">",
+      "field": "event_count",
+      "value": 700
+    }
+  ],
+  "type": "EVENT"
+}

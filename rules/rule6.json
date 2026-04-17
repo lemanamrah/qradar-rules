@@ -1,0 +1,13 @@
+{
+  "name": "Rule 6",
+  "severity": 6,
+  "enabled": true,
+  "conditions": [
+    {
+      "operator": ">",
+      "field": "event_count",
+      "value": 600
+    }
+  ],
+  "type": "EVENT"
+}

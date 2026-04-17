@@ -1,0 +1,13 @@
+{
+  "name": "Rule 8",
+  "severity": 8,
+  "enabled": true,
+  "conditions": [
+    {
+      "operator": ">",
+      "field": "event_count",
+      "value": 800
+    }
+  ],
+  "type": "EVENT"
+}

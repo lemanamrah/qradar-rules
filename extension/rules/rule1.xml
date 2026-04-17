@@ -1,0 +1,5 @@
+<rule>
+  <name>Test Rule</name>
+  <enabled>true</enabled>
+  <severity>5</severity>
+</rule>
