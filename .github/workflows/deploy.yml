@@ -10,15 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4   # Node.js 24 ilə uyğun versiya
 
       - name: Deploy rules to QRadar
         run: |
           for file in rules/*.json; do
             echo "Deploying $file to QRadar..."
-            curl -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/rules" \
+            curl -k -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/rules" \
               -H "Content-Type: application/json" \
               -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
               --data @"$file"
           done
+
 
