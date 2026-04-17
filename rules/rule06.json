@@ -1,24 +1,27 @@
-{
-  "name": "Firewall Rule Modification Outside Change Window",
-  "description": "Detects firewall rule changes occurring outside authorized change windows, which may indicate unauthorized access attempts.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventName",
-      "operator": "equals",
-      "value": "Firewall Rule Modified"
+[
+  {
+    "name": "Firewall Rule Modification Outside Change Window",
+    "description": "Detects unauthorized firewall rule changes occurring outside authorized windows.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event Name",
+          "operator": "EQUALS",
+          "value": "Firewall Rule Modified"
+        },
+        {
+          "field": "User Name",
+          "operator": "NOT_IN",
+          "value": "SecAdmin,NetOps"
+        }
+      ]
     },
-    {
-      "field": "ChangeWindow",
-      "operator": "equals",
-      "value": "False"
+    "trigger": {
+      "severity": 10,
+      "offense_type": "User"
     }
-  ],
-  "follow_up": {
-    "field": "Username",
-    "operator": "not_in",
-    "value": ["SecAdmin", "NetOps"]
-  },
-  "response": "Generate offense with severity Critical"
-}
-
+  }
+]
