@@ -1,23 +1,27 @@
-{
-  "name": "Privilege Escalation Attempt",
-  "description": "Detects when a standard user account performs actions that indicate privilege escalation.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventName",
-      "operator": "equals",
-      "value": "User Added to Administrators Group"
+[
+  {
+    "name": "Privilege Escalation Attempt",
+    "description": "Detects when a standard user account performs actions that indicate privilege escalation.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event Name",
+          "operator": "EQUALS",
+          "value": "User Added to Privileged Group"
+        },
+        {
+          "field": "User Role",
+          "operator": "EQUALS",
+          "value": "Standard"
+        }
+      ]
     },
-    {
-      "field": "UsernameRole",
-      "operator": "equals",
-      "value": "StandardUser"
+    "trigger": {
+      "severity": 9,
+      "offense_type": "User"
     }
-  ],
-  "follow_up": {
-    "field": "EventName",
-    "operator": "equals",
-    "value": "Admin-Level Action Performed"
-  },
-  "response": "Generate offense with severity Critical"
-}
+  }
+]
