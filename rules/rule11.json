@@ -1,0 +1,23 @@
+{
+  "name": "Windows Server New User Creation",
+  "description": "Detects when a new user account is created on a Windows Server, triggering an offense alert.",
+  "rule_type": "event",
+  "conditions": [
+    {
+      "field": "EventID",
+      "operator": "equals",
+      "value": 4720
+    },
+    {
+      "field": "LogSourceType",
+      "operator": "equals",
+      "value": "WindowsSecurityEventLog"
+    }
+  ],
+  "follow_up": {
+    "field": "Username",
+    "operator": "not_in",
+    "value": ["DomainAdmin", "HRSystem"]
+  },
+  "response": "Generate offense with severity Medium"
+}
