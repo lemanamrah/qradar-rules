@@ -1,23 +1,27 @@
-{
-  "name": "Suspicious VPN Login Location",
-  "description": "Detects VPN logins from unusual or unauthorized geographic locations.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventName",
-      "operator": "equals",
-      "value": "VPN Login"
+[
+  {
+    "name": "Suspicious VPN Login Location",
+    "description": "Detects VPN logins from unauthorized geographic locations.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event Name",
+          "operator": "EQUALS",
+          "value": "VPN Login Successful"
+        },
+        {
+          "field": "Source Region",
+          "operator": "NOT_IN",
+          "value": "AZ,TR,EU"
+        }
+      ]
     },
-    {
-      "field": "GeoLocation",
-      "operator": "not_in",
-      "value": ["AZ", "TR", "EU"]
+    "trigger": {
+      "severity": 8,
+      "offense_type": "Source IP"
     }
-  ],
-  "follow_up": {
-    "field": "LoginTime",
-    "operator": "outside_business_hours",
-    "value": "08:00-20:00"
-  },
-  "response": "Generate offense with severity High"
-}
+  }
+]
