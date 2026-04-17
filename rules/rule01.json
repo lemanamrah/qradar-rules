@@ -1,23 +1,22 @@
-{
-  "name": "Multiple Failed Logins Followed by Success",
-  "description": "Detects brute-force attempts where multiple failed logins are followed by a successful login.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventName",
-      "operator": "equals",
-      "value": "Failed Login"
+[
+  {
+    "name": "Multiple Failed Logins Followed by Success",
+    "description": "Detects brute-force attempts where multiple failed logins are followed by a successful login.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event Name",
+          "operator": "EQUALS",
+          "value": "Login Failed"
+        }
+      ]
     },
-    {
-      "field": "Count",
-      "operator": "greater_than",
-      "value": 5
+    "trigger": {
+      "threshold": 5,
+      "window": "5m"
     }
-  ],
-  "follow_up": {
-    "field": "EventName",
-    "operator": "equals",
-    "value": "Successful Login"
-  },
-  "response": "Generate offense with severity High"
-}
+  }
+]
