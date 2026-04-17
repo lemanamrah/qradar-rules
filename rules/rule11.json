@@ -1,23 +1,32 @@
-{
-  "name": "Windows Server New User Creation",
-  "description": "Detects when a new user account is created on a Windows Server, triggering an offense alert.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventID",
-      "operator": "equals",
-      "value": 4720
+[
+  {
+    "name": "Windows Server New User Creation",
+    "description": "Detects when a new user account is created on a Windows Server (Event ID 4720).",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event ID",
+          "operator": "EQUALS",
+          "value": "4720"
+        },
+        {
+          "field": "Log Source Type",
+          "operator": "EQUALS",
+          "value": "Microsoft Windows Security Event Log"
+        },
+        {
+          "field": "User Name",
+          "operator": "NOT_IN",
+          "value": "DomainAdmin,HRSystem"
+        }
+      ]
     },
-    {
-      "field": "LogSourceType",
-      "operator": "equals",
-      "value": "WindowsSecurityEventLog"
+    "trigger": {
+      "severity": 5,
+      "offense_type": "User"
     }
-  ],
-  "follow_up": {
-    "field": "Username",
-    "operator": "not_in",
-    "value": ["DomainAdmin", "HRSystem"]
-  },
-  "response": "Generate offense with severity Medium"
-}
+  }
+]
