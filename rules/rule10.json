@@ -1,23 +1,29 @@
-{
-  "name": "Suspicious File Share Access",
-  "description": "Detects unusual or unauthorized access to file shares, which may indicate insider threat or data theft.",
-  "rule_type": "event",
-  "conditions": [
-    {
-      "field": "EventName",
-      "operator": "equals",
-      "value": "File Share Access"
+[
+  {
+    "name": "Suspicious File Share Access",
+    "description": "Detects unusual or unauthorized access to file shares, indicating potential insider threat.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Event Name",
+          "operator": "EQUALS",
+          "value": "File Share Access"
+        },
+        {
+          "field": "User Name",
+          "operator": "NOT_IN",
+          "value": "FileAdmin,SecOps"
+        }
+      ]
     },
-    {
-      "field": "AccessCount",
-      "operator": "greater_than",
-      "value": 200
+    "trigger": {
+      "threshold": 200,
+      "window": "15m",
+      "severity": 8,
+      "offense_type": "Source IP"
     }
-  ],
-  "follow_up": {
-    "field": "Username",
-    "operator": "not_in",
-    "value": ["FileAdmin", "SecOps"]
-  },
-  "response": "Generate offense with severity High"
-}
+  }
+]
