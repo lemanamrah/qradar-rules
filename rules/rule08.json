@@ -1,23 +1,27 @@
-{
-  "name": "Malware Beaconing Pattern",
-  "description": "Detects periodic outbound connections that match beaconing behavior, often associated with malware C2 communication.",
-  "rule_type": "network",
-  "conditions": [
-    {
-      "field": "Direction",
-      "operator": "equals",
-      "value": "Outbound"
+[
+  {
+    "name": "Malware Beaconing Pattern",
+    "description": "Detects periodic outbound connections matching beaconing behavior.",
+    "enabled": true,
+    "type": "ADE_RULE",
+    "source_data": {
+      "strategy": "simple_logic",
+      "conditions": [
+        {
+          "field": "Direction",
+          "operator": "EQUALS",
+          "value": "Outbound"
+        },
+        {
+          "field": "Destination Domain",
+          "operator": "MATCHES",
+          "value": ".*(dynamicdns|unknown|suspicious).*"
+        }
+      ]
     },
-    {
-      "field": "ConnectionInterval",
-      "operator": "matches",
-      "value": ".*(60|120|300).*"
+    "trigger": {
+      "severity": 10,
+      "offense_type": "Destination IP"
     }
-  ],
-  "follow_up": {
-    "field": "DestinationDomain",
-    "operator": "matches",
-    "value": ".*(dynamicdns|unknown|suspicious).*"
-  },
-  "response": "Generate offense with severity Critical"
-}
+  }
+]
