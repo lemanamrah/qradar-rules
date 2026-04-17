@@ -1,0 +1,13 @@
+{
+  "name": "Test Rule",
+  "description": "Simple test rule to verify GitHub Actions deployment to QRadar.",
+  "rule_type": "event",
+  "conditions": [
+    {
+      "field": "EventName",
+      "operator": "equals",
+      "value": "TestEvent"
+    }
+  ],
+  "response": "Generate offense with severity Low"
+}
