@@ -16,7 +16,7 @@ jobs:
 
       - name: Create Extension Zip
         run: |
-          # Manifest və JSON qaydalarını zip-in kökünə yığırıq
+          # -j bayrağı faylları qovluq yaratmadan birbaşa zip-in içinə yığır
           zip -j extension.zip manifest.xml rules/*.json
 
       - name: Upload Extension to QRadar
@@ -39,6 +39,7 @@ jobs:
         if: success()
         run: |
           echo "Triggering global deployment..."
-          curl -k -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/deploy" \
+          # Dəyişikliklərin QRadar-da aktivləşməsi üçün deploy əmri
+          curl -k -s -X POST "https://${{ secrets.QRADAR_HOST }}/api/config/deploy" \
             -H "SEC: ${{ secrets.QRADAR_API_TOKEN }}" \
-            -k -s
+            -H "Accept: application/json"
